@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converter - Powered by Develish One Foundation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --dark: #0d1b2a;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--dark), #1d2d44);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .brand-highlight {
+            color: var(--success);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+            padding: 5rem 0;
+            margin-bottom: 3rem;
+            border-radius: 0 0 30px 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .tool-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            border: none;
+            box-shadow: 0 7px 20px rgba(0,0,0,0.1);
+            background: white;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 25px rgba(67, 97, 238, 0.15);
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            background: rgba(67, 97, 238, 0.1);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+        }
+        
+        .tab-content {
+            padding: 25px;
+        }
+        
+        .converter-box {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        
+        .result-box {
+            background: linear-gradient(135deg, #e8f4ff, #d6e9ff);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 100px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--dark), #1a2639);
+            color: white;
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 12px 28px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .btn-download:hover {
+            background: linear-gradient(135deg, #218838, #1c7430);
+            color: white;
+        }
+        
+        .converter-input {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.3s;
+        }
+        
+        .converter-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .tool-btn {
+            width: 100%;
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+        
+        .finance-result {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .preview-container {
+            max-width: 100%;
+            margin: 15px auto;
+            text-align: center;
+            display: none;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .download-section {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 10px;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 12px;
+            background: rgba(67, 97, 238, 0.1);
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        .file-input-label:hover {
+            background: rgba(67, 97, 238, 0.2);
+        }
+        
+        .file-input-label i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .file-info {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: var(--success);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background: rgba(255,255,255,0.3);
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .converter-logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification -->
+    <div class="notification">
+        <div class="message">Processing completed successfully!</div>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-exchange-alt me-2"></i>
+                <span class="converter-logo">Converter</span>
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-light me-3 d-none d-md-block">by Develish One Foundation</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#pdf-tools">PDF Tools</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#image-tools">Image Tools</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#unit-converter">Unit Converter</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#finance-tools">Finance Tools</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">All-In-One Conversion Toolkit</h1>
+            <p class="lead mb-4">Powerful PDF, image, unit, and financial tools in one place</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <button class="btn btn-light btn-lg px-4">Get Started</button>
+                <button class="btn btn-outline-light btn-lg px-4">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- PDF Tools Section -->
+        <section id="pdf-tools" class="mb-5">
+            <h2 class="section-title">PDF Tools</h2>
+            <div class="row">
+                <!-- PDF to Word -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="tool-card">
+                        <div class="card-header">PDF to Word</div>
+                        <div class="tab-content">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-file-word tool-icon"></i>
+                            </div>
+                            <p>Convert PDF files to editable Word documents</p>
+                            
+                            <label class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Choose PDF File</span>
+                                <div class="file-info">Max size: 5MB</div>
+                                <input type="file" class="d-none" id="pdfToWordInput" accept=".pdf">
+                            </label>
+                            
+                            <div class="preview-container" id="pdfToWordPreview">
+                                <img src="" class="preview-image" alt="PDF Preview">
+                            </div>
+                            
+                            <button class="btn btn-primary tool-btn" id="pdfToWordBtn">Convert to DOCX</button>
+                            
+                            <div class="download-section" id="pdfToWordDownload">
+                                <p>Your file is ready for download</p>
+                                <a href="#" class="btn-download" download="converted.docx">
+                                    <i class="fas fa-download"></i> Download Word Document
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Compress PDF -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="tool-card">
+                        <div class="card-header">Compress PDF</div>
+                        <div class="tab-content">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-compress-alt tool-icon"></i>
+                            </div>
+                            <p>Reduce PDF file size while optimizing quality</p>
+                            
+                            <label class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Choose PDF File</span>
+                                <div class="file-info">Max size: 5MB</div>
+                                <input type="file" class="d-none" id="compressPdfInput" accept=".pdf">
+                            </label>
+                            
+                            <select class="form-select mb-3">
+                                <option>Medium Compression</option>
+                                <option>High Compression</option>
+                                <option>Extreme Compression</option>
+                            </select>
+                            
+                            <button class="btn btn-primary tool-btn" id="compressPdfBtn">Compress PDF</button>
+                            
+                            <div class="download-section" id="compressPdfDownload">
+                                <p>Compressed file is ready</p>
+                                <a href="#" class="btn-download" download="compressed.pdf">
+                                    <i class="fas fa-download"></i> Download PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Merge PDFs -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="tool-card">
+                        <div class="card-header">Merge PDFs</div>
+                        <div class="tab-content">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-file-pdf tool-icon"></i>
+                            </div>
+                            <p>Combine multiple PDF files into one document</p>
+                            
+                            <label class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Select PDF Files</span>
+                                <div class="file-info">Select multiple files</div>
+                                <input type="file" class="d-none" id="mergePdfInput" accept=".pdf" multiple>
+                            </label>
+                            
+                            <div id="selectedFiles" class="mb-3 small text-muted"></div>
+                            
+                            <button class="btn btn-primary tool-btn" id="mergePdfBtn">Merge Files</button>
+                            
+                            <div class="download-section" id="mergePdfDownload">
+                                <p>Merged PDF is ready</p>
+                                <a href="#" class="btn-download" download="merged.pdf">
+                                    <i class="fas fa-download"></i> Download Merged PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Split PDF -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="tool-card">
+                        <div class="card-header">Split PDF</div>
+                        <div class="tab-content">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-cut tool-icon"></i>
+                            </div>
+                            <p>Split a PDF into multiple files by pages</p>
+                            
+                            <label class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Choose PDF File</span>
+                                <div class="file-info">Max size: 5MB</div>
+                                <input type="file" class="d-none" id="splitPdfInput" accept=".pdf">
+                            </label>
+                            
+                            <div class="input-group mb-3">
+                                <input type="number" class="form-control" placeholder="Start" min="1" value="1" id="splitStart">
+                                <span class="input-group-text">to</span>
+                                <input type="number" class="form-control" placeholder="End" min="1" value="1" id="splitEnd">
+                            </div>
+                            
+                            <button class="btn btn-primary tool-btn" id="splitPdfBtn">Split PDF</button>
+                            
+                            <div class="download-section" id="splitPdfDownload">
+                                <p>Your split files are ready</p>
+                                <a href="#" class="btn-download" download="split-pages.pdf">
+                                    <i class="fas fa-download"></i> Download Split PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Image Tools Section -->
+        <section id="image-tools" class="mb-5">
+            <h2 class="section-title">Image Tools</h2>
+            <div class="row">
+                <!-- Resize Image -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="tool-card">
+                        <div class="card-header">Resize Image</div>
+                        <div class="tab-content">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-expand-alt tool-icon"></i>
+                            </div>
+                            <p>Change dimensions of your image</p>
+                            
+                            <label class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Select Image</span>
+                                <div class="file-info">JPG, PNG, GIF</div>
+                                <input type="file" class="d-none" id="resizeImageInput" accept="image/*">
+                            </label>
+                            
+                            <div class="preview-container" id="resizePreview">
+                                <img src="" class="preview-image" alt="Image Preview">
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="number" class="form-control" placeholder="Width" value="800" id="resizeWidth">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" placeholder="Height" value="600" id="resizeHeight">
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary tool-btn" id="resizeImageBtn">Resize Image</button>
+                            
+                            <div class="download-section" id="resizeDownload">
+                                <p>Resized image is ready</p>
+                                <a href="#" class="btn-download" id="resizeDownloadLink" download="resized.jpg">
+                                    <i class="fas fa-download"></i> Download Image
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Compress Image -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="tool-card">
+                        <div class="card-header">Compress Image</div>
+                        <div class="tab-content">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-file-image tool-icon"></i>
+                            </div>
+                            <p>Reduce image file size</p>
+                            
+                            <label class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Select Image</span>
+                                <div class="file-info">JPG, PNG, GIF</div>
+                                <input type="file" class="d-none" id="compressImageInput" accept="image/*">
+                            </label>
+                            
+                            <div class="preview-container" id="compressPreview">
+                                <img src="" class="preview-image" alt="Image Preview">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Quality: <span id="quality-value">80%</span></label>
+                                <input type="range" class="form-range" min="1" max="100" value="80" id="quality-slider">
+                            </div>
+                            
+                            <button class="btn btn-primary tool-btn" id="compressImageBtn">Compress Image</button>
+                            
+                            <div class="download-section" id="compressDownload">
+                                <div class="d-flex justify-content-between small mb-2">
+                                    <span>Original size: <span id="originalSize">0 KB</span></span>
+                                    <span>Compressed: <span id="compressedSize">0 KB</span></span>
+                                </div>
+                                <a href="#" class="btn-download" id="compressDownloadLink" download="compressed.jpg">
+                                    <i class="fas fa-download"></i> Download Compressed
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Convert Format -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="tool-card">
+                        <div class="card-header">Convert Format</div>
+                        <div class="tab-content">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-sync-alt tool-icon"></i>
+                            </div>
+                            <p>Convert between JPG, PNG, WEBP, etc.</p>
+                            
+                            <label class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Select Image</span>
+                                <div class="file-info">JPG, PNG, GIF</div>
+                                <input type="file" class="d-none" id="convertImageInput" accept="image/*">
+                            </label>
+                            
+                            <div class="preview-container" id="convertPreview">
+                                <img src="" class="preview-image" alt="Image Preview">
+                            </div>
+                            
+                            <select class="form-select mb-3" id="formatSelect">
+                                <option value="jpg">JPG</option>
+                                <option value="png">PNG</option>
+                                <option value="webp">WEBP</option>
+                                <option value="gif">GIF</option>
+                            </select>
+                            
+                            <button class="btn btn-primary tool-btn" id="convertImageBtn">Convert Image</button>
+                            
+                            <div class="download-section" id="convertDownload">
+                                <p>Converted image is ready</p>
+                                <a href="#" class="btn-download" id="convertDownloadLink" download="converted.jpg">
+                                    <i class="fas fa-download"></i> Download Converted
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Crop Image -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="tool-card">
+                        <div class="card-header">Crop Image</div>
+                        <div class="tab-content">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-crop-alt tool-icon"></i>
+                            </div>
+                            <p>Crop your image to desired dimensions</p>
+                            
+                            <label class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Select Image</span>
+                                <div class="file-info">JPG, PNG, GIF</div>
+                                <input type="file" class="d-none" id="cropImageInput" accept="image/*">
+                            </label>
+                            
+                            <div class="preview-container" id="cropPreview">
+                                <img src="" class="preview-image" alt="Image Preview">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Crop Area:</label>
+                                <div class="row g-2">
+                                    <div class="col-3">
+                                        <input type="number" class="form-control" placeholder="X" value="0" id="cropX">
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="number" class="form-control" placeholder="Y" value="0" id="cropY">
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="number" class="form-control" placeholder="W" value="400" id="cropW">
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="number" class="form-control" placeholder="H" value="300" id="cropH">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary tool-btn" id="cropImageBtn">Crop Image</button>
+                            
+                            <div class="download-section" id="cropDownload">
+                                <p>Cropped image is ready</p>
+                                <a href="#" class="btn-download" id="cropDownloadLink" download="cropped.jpg">
+                                    <i class="fas fa-download"></i> Download Cropped
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Unit Converter Section -->
+        <section id="unit-converter" class="mb-5">
+            <h2 class="section-title">Unit Converter</h2>
+            <div class="converter-box">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Convert From:</label>
+                            <select class="form-select converter-input" id="fromUnit">
+                                <option value="meter">Meter</option>
+                                <option value="kilometer">Kilometer</option>
+                                <option value="centimeter">Centimeter</option>
+                                <option value="millimeter">Millimeter</option>
+                                <option value="mile">Mile</option>
+                                <option value="yard">Yard</option>
+                                <option value="foot">Foot</option>
+                                <option value="inch">Inch</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Value:</label>
+                            <input type="number" class="form-control converter-input" id="inputValue" value="1" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Convert To:</label>
+                            <select class="form-select converter-input" id="toUnit">
+                                <option value="meter">Meter</option>
+                                <option value="kilometer" selected>Kilometer</option>
+                                <option value="centimeter">Centimeter</option>
+                                <option value="millimeter">Millimeter</option>
+                                <option value="mile">Mile</option>
+                                <option value="yard">Yard</option>
+                                <option value="foot">Foot</option>
+                                <option value="inch">Inch</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary btn-lg px-5" id="convertBtn">Convert</button>
+                </div>
+                
+                <div class="result-box text-center p-4 mt-4">
+                    <h3 class="mb-0" id="conversionResult">1 Meter = 0.001 Kilometers</h3>
+                </div>
+                
+                <div class="mt-4">
+                    <ul class="nav nav-tabs" id="unitTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="length-tab" data-bs-toggle="tab" data-bs-target="#length" type="button">Length</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="weight-tab" data-bs-toggle="tab" data-bs-target="#weight" type="button">Weight</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="temperature-tab" data-bs-toggle="tab" data-bs-target="#temperature" type="button">Temperature</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="volume-tab" data-bs-toggle="tab" data-bs-target="#volume" type="button">Volume</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3 border border-top-0" id="unitTabContent">
+                        <div class="tab-pane fade show active" id="length" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 meter</span>
+                                        <span>= 100 cm</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 km</span>
+                                        <span>= 1000 m</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 inch</span>
+                                        <span>= 2.54 cm</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 foot</span>
+                                        <span>= 30.48 cm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="weight" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 kilogram</span>
+                                        <span>= 1000 grams</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 pound</span>
+                                        <span>= 453.592 grams</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 ounce</span>
+                                        <span>= 28.3495 grams</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 ton</span>
+                                        <span>= 1000 kg</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="temperature" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>°C to °F</span>
+                                        <span>°F = (°C × 9/5) + 32</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>°F to °C</span>
+                                        <span>°C = (°F - 32) × 5/9</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>K to °C</span>
+                                        <span>°C = K - 273.15</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="volume" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 liter</span>
+                                        <span>= 1000 ml</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 gallon (US)</span>
+                                        <span>= 3.785 liters</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 cubic meter</span>
+                                        <span>= 1000 liters</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>1 fluid ounce</span>
+                                        <span>= 29.5735 ml</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Finance Tools Section -->
+        <section id="finance-tools" class="mb-5">
+            <h2 class="section-title">Finance Tools</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="tool-card">
+                        <div class="card-header">Loan Calculator</div>
+                        <div class="tab-content">
+                            <div class="mb-3">
+                                <label class="form-label">Loan Amount ($)</label>
+                                <input type="number" class="form-control converter-input" id="loanAmount" value="10000">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Interest Rate (%)</label>
+                                <input type="number" class="form-control converter-input" id="interestRate" value="5" step="0.1">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Loan Term (years)</label>
+                                <input type="number" class="form-control converter-input" id="loanTerm" value="5">
+                            </div>
+                            <button class="btn btn-primary tool-btn" id="calculateLoan">Calculate</button>
+                            
+                            <div class="result-box mt-4">
+                                <h5 class="text-center">Loan Summary</h5>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <span>Monthly Payment:</span>
+                                    <span class="finance-result" id="monthlyPayment">$188.71</span>
+                                </div>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span>Total Payment:</span>
+                                    <span class="finance-result" id="totalPayment">$11,322.74</span>
+                                </div>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span>Total Interest:</span>
+                                    <span class="finance-result" id="totalInterest">$1,322.74</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="tool-card">
+                        <div class="card-header">Currency Converter</div>
+                        <div class="tab-content">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">From:</label>
+                                    <select class="form-select converter-input" id="fromCurrency">
+                                        <option value="USD">USD - US Dollar</option>
+                                        <option value="EUR">EUR - Euro</option>
+                                        <option value="GBP">GBP - British Pound</option>
+                                        <option value="JPY">JPY - Japanese Yen</option>
+                                        <option value="CAD">CAD - Canadian Dollar</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">To:</label>
+                                    <select class="form-select converter-input" id="toCurrency">
+                                        <option value="EUR">EUR - Euro</option>
+                                        <option value="USD" selected>USD - US Dollar</option>
+                                        <option value="GBP">GBP - British Pound</option>
+                                        <option value="JPY">JPY - Japanese Yen</option>
+                                        <option value="CAD">CAD - Canadian Dollar</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Amount:</label>
+                                <input type="number" class="form-control converter-input" id="currencyAmount" value="100" min="0" step="0.01">
+                            </div>
+                            <button class="btn btn-primary tool-btn" id="convertCurrency">Convert</button>
+                            
+                            <div class="result-box text-center p-4 mt-4">
+                                <h3 class="mb-0" id="currencyResult">100 USD = 92.50 EUR</h3>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>Exchange Rates (1 USD):</h6>
+                                <div class="d-flex justify-content-between">
+                                    <span>EUR:</span>
+                                    <span>0.925</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>GBP:</span>
+                                    <span>0.785</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>JPY:</span>
+                                    <span>142.50</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>CAD:</span>
+                                    <span>1.350</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="tool-card">
+                        <div class="card-header">Compound Interest Calculator</div>
+                        <div class="tab-content">
+                            <div class="mb-3">
+                                <label class="form-label">Initial Investment ($)</label>
+                                <input type="number" class="form-control converter-input" id="principal" value="5000">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Annual Interest Rate (%)</label>
+                                <input type="number" class="form-control converter-input" id="compoundRate" value="5" step="0.1">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Years to Grow</label>
+                                <input type="number" class="form-control converter-input" id="years" value="10">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Compound Frequency</label>
+                                <select class="form-select converter-input" id="compoundFrequency">
+                                    <option value="1">Annually</option>
+                                    <option value="2">Semi-Annually</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="12" selected>Monthly</option>
+                                    <option value="365">Daily</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary tool-btn" id="calculateCompound">Calculate</button>
+                            
+                            <div class="result-box mt-4 text-center">
+                                <h5>Future Value:</h5>
+                                <h3 class="finance-result mt-2" id="futureValue">$8,235.05</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="tool-card">
+                        <div class="card-header">Savings Goal Calculator</div>
+                        <div class="tab-content">
+                            <div class="mb-3">
+                                <label class="form-label">Savings Goal ($)</label>
+                                <input type="number" class="form-control converter-input" id="savingsGoal" value="10000">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Initial Amount ($)</label>
+                                <input type="number" class="form-control converter-input" id="initialAmount" value="1000">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Monthly Contribution ($)</label>
+                                <input type="number" class="form-control converter-input" id="monthlyContribution" value="200">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Annual Interest Rate (%)</label>
+                                <input type="number" class="form-control converter-input" id="savingsRate" value="4" step="0.1">
+                            </div>
+                            <button class="btn btn-primary tool-btn" id="calculateSavings">Calculate</button>
+                            
+                            <div class="result-box mt-4 text-center">
+                                <h5>Time to Reach Goal:</h5>
+                                <h3 class="finance-result mt-2" id="timeToGoal">3 years 8 months</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-4">Converter</h4>
+                    <p>Your all-in-one solution for PDF, image, unit conversion, and financial calculations.</p>
+                    <p>Powered by Develish One Foundation</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-4">Quick Links</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#pdf-tools" class="text-white">PDF Tools</a></li>
+                        <li class="mb-2"><a href="#image-tools" class="text-white">Image Tools</a></li>
+                        <li class="mb-2"><a href="#unit-converter" class="text-white">Unit Converter</a></li>
+                        <li class="mb-2"><a href="#finance-tools" class="text-white">Finance Tools</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h4 class="mb-4">Contact Us</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@develishfoundation.org</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> San Francisco, CA</li>
+                    </ul>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4">
+            <div class="text-center">
+                <p>&copy; 2023 Converter. Powered by Develish One Foundation. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Unit Conversion
+        document.getElementById('convertBtn').addEventListener('click', function() {
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const value = parseFloat(document.getElementById('inputValue').value);
+            
+            // Conversion factors to meters
+            const factors = {
+                meter: 1,
+                kilometer: 1000,
+                centimeter: 0.01,
+                millimeter: 0.001,
+                mile: 1609.34,
+                yard: 0.9144,
+                foot: 0.3048,
+                inch: 0.0254
+            };
+            
+            // Convert input to meters first
+            const inMeters = value * factors[fromUnit];
+            // Convert from meters to target unit
+            const result = inMeters / factors[toUnit];
+            
+            document.getElementById('conversionResult').textContent = 
+                `${value} ${fromUnit} = ${result.toFixed(6)} ${toUnit}`;
+        });
+        
+        // Loan Calculator
+        document.getElementById('calculateLoan').addEventListener('click', function() {
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value) * 12;
+            
+            // Calculate monthly payment
+            const x = Math.pow(1 + interestRate, loanTerm);
+            const monthly = (loanAmount * x * interestRate) / (x - 1);
+            
+            if (!isNaN(monthly) && isFinite(monthly)) {
+                const totalPayment = monthly * loanTerm;
+                const totalInterest = totalPayment - loanAmount;
+                
+                document.getElementById('monthlyPayment').textContent = '$' + monthly.toFixed(2);
+                document.getElementById('totalPayment').textContent = '$' + totalPayment.toFixed(2);
+                document.getElementById('totalInterest').textContent = '$' + totalInterest.toFixed(2);
+            }
+        });
+        
+        // Currency Converter
+        document.getElementById('convertCurrency').addEventListener('click', function() {
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const amount = parseFloat(document.getElementById('currencyAmount').value);
+            
+            // Mock exchange rates (in a real app, you would fetch from an API)
+            const rates = {
+                USD: { EUR: 0.925, GBP: 0.785, JPY: 142.50, CAD: 1.350, USD: 1 },
+                EUR: { USD: 1.081, GBP: 0.848, JPY: 154.05, CAD: 1.459, EUR: 1 },
+                GBP: { USD: 1.274, EUR: 1.179, JPY: 181.53, CAD: 1.719, GBP: 1 },
+                JPY: { USD: 0.0070, EUR: 0.0065, GBP: 0.0055, CAD: 0.0095, JPY: 1 },
+                CAD: { USD: 0.741, EUR: 0.685, GBP: 0.581, JPY: 105.26, CAD: 1 }
+            };
+            
+            const result = amount * rates[fromCurrency][toCurrency];
+            document.getElementById('currencyResult').textContent = 
+                `${amount} ${fromCurrency} = ${result.toFixed(2)} ${toCurrency}`;
+        });
+        
+        // Compound Interest Calculator
+        document.getElementById('calculateCompound').addEventListener('click', function() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('compoundRate').value) / 100;
+            const years = parseFloat(document.getElementById('years').value);
+            const frequency = parseFloat(document.getElementById('compoundFrequency').value);
+            
+            const amount = principal * Math.pow(1 + (rate / frequency), frequency * years);
+            
+            if (!isNaN(amount) && isFinite(amount)) {
+                document.getElementById('futureValue').textContent = '$' + amount.toFixed(2);
+            }
+        });
+        
+        // Savings Goal Calculator
+        document.getElementById('calculateSavings').addEventListener('click', function() {
+            const goal = parseFloat(document.getElementById('savingsGoal').value);
+            const initial = parseFloat(document.getElementById('initialAmount').value);
+            const monthly = parseFloat(document.getElementById('monthlyContribution').value);
+            const rate = parseFloat(document.getElementById('savingsRate').value) / 100 / 12;
+            
+            // Calculate months needed to reach goal
+            let months = 0;
+            let balance = initial;
+            
+            while (balance < goal) {
+                balance = balance * (1 + rate) + monthly;
+                months++;
+                
+                // Break if it's taking too long
+                if (months > 1200) break;
+            }
+            
+            const years = Math.floor(months / 12);
+            const remainingMonths = months % 12;
+            
+            document.getElementById('timeToGoal').textContent = 
+                `${years} years ${remainingMonths} months`;
+        });
+        
+        // Image Quality Slider
+        document.getElementById('quality-slider').addEventListener('input', function() {
+            document.getElementById('quality-value').textContent = this.value + '%';
+        });
+        
+        // Image Processing Functions
+        // Resize Image
+        document.getElementById('resizeImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('resizePreview');
+                const img = preview.querySelector('.preview-image');
+                img.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        document.getElementById('resizeImageBtn').addEventListener('click', function() {
+            const preview = document.getElementById('resizePreview');
+            const img = preview.querySelector('.preview-image');
+            const width = parseInt(document.getElementById('resizeWidth').value) || 800;
+            const height = parseInt(document.getElementById('resizeHeight').value) || 600;
+            
+            if (!img.src) {
+                showNotification('Please select an image first');
+                return;
+            }
+            
+            // Create canvas for resizing
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            const image = new Image();
+            image.onload = function() {
+                ctx.drawImage(image, 0, 0, width, height);
+                
+                // Create download link
+                const downloadLink = document.getElementById('resizeDownloadLink');
+                downloadLink.href = canvas.toDataURL('image/jpeg', 0.9);
+                
+                // Show download section
+                document.getElementById('resizeDownload').style.display = 'block';
+                showNotification('Image resized successfully!');
+            };
+            image.src = img.src;
+        });
+        
+        // Compress Image
+        document.getElementById('compressImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('originalSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('compressPreview');
+                const img = preview.querySelector('.preview-image');
+                img.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        document.getElementById('compressImageBtn').addEventListener('click', function() {
+            const preview = document.getElementById('compressPreview');
+            const img = preview.querySelector('.preview-image');
+            const quality = parseInt(document.getElementById('quality-slider').value) / 100;
+            
+            if (!img.src) {
+                showNotification('Please select an image first');
+                return;
+            }
+            
+            // Create canvas for compression
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const image = new Image();
+            image.onload = function() {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                ctx.drawImage(image, 0, 0);
+                
+                // Create compressed image
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                
+                // Calculate compressed size
+                const compressedSize = Math.round((compressedDataUrl.length * 3) / 4);
+                document.getElementById('compressedSize').textContent = (compressedSize / 1024).toFixed(1) + ' KB';
+                
+                // Create download link
+                const downloadLink = document.getElementById('compressDownloadLink');
+                downloadLink.href = compressedDataUrl;
+                downloadLink.download = 'compressed.jpg';
+                
+                // Show download section
+                document.getElementById('compressDownload').style.display = 'block';
+                showNotification('Image compressed successfully!');
+            };
+            image.src = img.src;
+        });
+        
+        // Convert Image Format
+        document.getElementById('convertImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('convertPreview');
+                const img = preview.querySelector('.preview-image');
+                img.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        document.getElementById('convertImageBtn').addEventListener('click', function() {
+            const preview = document.getElementById('convertPreview');
+            const img = preview.querySelector('.preview-image');
+            const format = document.getElementById('formatSelect').value;
+            
+            if (!img.src) {
+                showNotification('Please select an image first');
+                return;
+            }
+            
+            // Create canvas for conversion
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const image = new Image();
+            image.onload = function() {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                ctx.drawImage(image, 0, 0);
+                
+                // Create converted image
+                let mimeType = 'image/jpeg';
+                if (format === 'png') mimeType = 'image/png';
+                if (format === 'webp') mimeType = 'image/webp';
+                if (format === 'gif') mimeType = 'image/gif';
+                
+                const convertedDataUrl = canvas.toDataURL(mimeType, 0.9);
+                
+                // Create download link
+                const downloadLink = document.getElementById('convertDownloadLink');
+                downloadLink.href = convertedDataUrl;
+                downloadLink.download = 'converted.' + format;
+                
+                // Show download section
+                document.getElementById('convertDownload').style.display = 'block';
+                showNotification(`Image converted to ${format.toUpperCase()} successfully!`);
+            };
+            image.src = img.src;
+        });
+        
+        // Crop Image
+        document.getElementById('cropImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('cropPreview');
+                const img = preview.querySelector('.preview-image');
+                img.src = e.target.result;
+                preview.style.display = 'block';
+                
+                // Set default crop values to full image
+                img.onload = function() {
+                    document.getElementById('cropW').value = img.width;
+                    document.getElementById('cropH').value = img.height;
+                };
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        document.getElementById('cropImageBtn').addEventListener('click', function() {
+            const preview = document.getElementById('cropPreview');
+            const img = preview.querySelector('.preview-image');
+            const x = parseInt(document.getElementById('cropX').value) || 0;
+            const y = parseInt(document.getElementById('cropY').value) || 0;
+            const width = parseInt(document.getElementById('cropW').value) || 100;
+            const height = parseInt(document.getElementById('cropH').value) || 100;
+            
+            if (!img.src) {
+                showNotification('Please select an image first');
+                return;
+            }
+            
+            // Create canvas for cropping
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            const image = new Image();
+            image.onload = function() {
+                ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
+                
+                // Create cropped image
+                const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                
+                // Create download link
+                const downloadLink = document.getElementById('cropDownloadLink');
+                downloadLink.href = croppedDataUrl;
+                downloadLink.download = 'cropped.jpg';
+                
+                // Show download section
+                document.getElementById('cropDownload').style.display = 'block';
+                showNotification('Image cropped successfully!');
+            };
+            image.src = img.src;
+        });
+        
+        // PDF to Word (simulated)
+        document.getElementById('pdfToWordInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('pdfToWordPreview');
+                const img = preview.querySelector('.preview-image');
+                
+                // For demo purposes, show a PDF icon
+                img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="%234361ee"><path d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z"/></svg>';
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        document.getElementById('pdfToWordBtn').addEventListener('click', function() {
+            const input = document.getElementById('pdfToWordInput');
+            if (!input.files || input.files.length === 0) {
+                showNotification('Please select a PDF file first');
+                return;
+            }
+            
+            // Simulate conversion process
+            simulateProcessing(function() {
+                document.getElementById('pdfToWordDownload').style.display = 'block';
+                showNotification('PDF converted to Word successfully!');
+            });
+        });
+        
+        // Compress PDF (simulated)
+        document.getElementById('compressPdfBtn').addEventListener('click', function() {
+            const input = document.getElementById('compressPdfInput');
+            if (!input.files || input.files.length === 0) {
+                showNotification('Please select a PDF file first');
+                return;
+            }
+            
+            // Simulate compression process
+            simulateProcessing(function() {
+                document.getElementById('compressPdfDownload').style.display = 'block';
+                showNotification('PDF compressed successfully!');
+            });
+        });
+        
+        // Merge PDFs (simulated)
+        document.getElementById('mergePdfInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+            
+            const fileList = document.getElementById('selectedFiles');
+            fileList.innerHTML = '';
+            
+            for (let i = 0; i < files.length; i++) {
+                const div = document.createElement('div');
+                div.textContent = `${i+1}. ${files[i].name}`;
+                fileList.appendChild(div);
+            }
+        });
+        
+        document.getElementById('mergePdfBtn').addEventListener('click', function() {
+            const input = document.getElementById('mergePdfInput');
+            if (!input.files || input.files.length < 2) {
+                showNotification('Please select at least 2 PDF files to merge');
+                return;
+            }
+            
+            // Simulate merging process
+            simulateProcessing(function() {
+                document.getElementById('mergePdfDownload').style.display = 'block';
+                showNotification('PDFs merged successfully!');
+            });
+        });
+        
+        // Split PDF (simulated)
+        document.getElementById('splitPdfBtn').addEventListener('click', function() {
+            const input = document.getElementById('splitPdfInput');
+            if (!input.files || input.files.length === 0) {
+                showNotification('Please select a PDF file first');
+                return;
+            }
+            
+            const start = parseInt(document.getElementById('splitStart').value) || 1;
+            const end = parseInt(document.getElementById('splitEnd').value) || 1;
+            
+            if (start > end) {
+                showNotification('Start page cannot be greater than end page');
+                return;
+            }
+            
+            // Simulate splitting process
+            simulateProcessing(function() {
+                document.getElementById('splitPdfDownload').style.display = 'block';
+                showNotification(`PDF pages ${start}-${end} extracted successfully!`);
+            });
+        });
+        
+        // Helper function to simulate processing
+        function simulateProcessing(callback) {
+            const notification = document.querySelector('.notification');
+            const progress = document.querySelector('.progress');
+            
+            notification.querySelector('.message').textContent = 'Processing your file...';
+            notification.style.display = 'block';
+            progress.style.width = '0%';
+            
+            let width = 0;
+            const interval = setInterval(function() {
+                width += 5;
+                progress.style.width = width + '%';
+                
+                if (width >= 100) {
+                    clearInterval(interval);
+                    notification.querySelector('.message').textContent = 'Processing completed successfully!';
+                    
+                    setTimeout(function() {
+                        notification.style.display = 'none';
+                        if (callback) callback();
+                    }, 1500);
+                }
+            }, 100);
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const notification = document.querySelector('.notification');
+            const progress = document.querySelector('.progress');
+            
+            notification.querySelector('.message').textContent = message;
+            notification.style.display = 'block';
+            progress.style.width = '0%';
+            
+            setTimeout(function() {
+                progress.style.width = '100%';
+            }, 10);
+            
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Initialize some values
+        document.getElementById('calculateLoan').click();
+        document.getElementById('convertCurrency').click();
+        document.getElementById('calculateCompound').click();
+        document.getElementById('calculateSavings').click();
+    </script>
+</body>
+</html>
